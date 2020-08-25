@@ -1,15 +1,22 @@
 <?php
-require '../config/config.php';
 session_start(); 
+require '../config/config.php';
+
+
 if(empty($_SESSION['user_id']) && empty( $_SESSION['logged_in'])){
 header('location:login.php');
 }
-include('header.php');
+if(isset($_POST['search'])) {
+    setcookie('search',$_POST['search'], time() + (86400 * 30), "/");
+    }
+
+  
 ?>
 
-
+<?php include('header.php'); ?>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
+
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <div class="container-fluid">
@@ -31,7 +38,7 @@ include('header.php');
     </div>
     <?php
     
-if(!empty($_GET)){
+if(!empty($_GET['page_no'])){
         $page_no=$_GET['page_no'];
     }
     else{
@@ -40,10 +47,9 @@ if(!empty($_GET)){
     $num_of_regs=2;
     $offset=($page_no - 1)*$num_of_regs;
 
-    if(!empty($_POST['search']))
-    $search_key=$_POST['search'];
     
-    if(empty($search_key)){
+    
+    if (empty($_POST['search']) && !isset($_COOKIE['search'])){
   
             $stmt=$pdo->prepare("SELECT * FROM post  ORDER BY id DESC");
            
@@ -56,6 +62,7 @@ if(!empty($_GET)){
             $stmt->execute();
             $posts=$stmt->fetchAll();}
             else{
+                $search_key = $_COOKIE['search'];
                
                 $stmt=$pdo->prepare("SELECT * FROM post WHERE title LIKE '%$search_key%'  ORDER BY id DESC");
            
@@ -132,12 +139,14 @@ if(!empty($_GET)){
                 </li>
             </ul>
         </div>
-        <?php } else{?>
-        <h1>There is no post match with '<?php echo $_POST['search']; ?>'</h1>
-        <?php }?>
 
 
     </div>
+    <?php } else{?>
+    <h1>
+        <?php if(!empty($_POST['search'])) {echo "There is no post match with '".$_POST['search']."'";}else{ echo "There is no post yet";} ?>
+    </h1>
+    <?php }?>
 
     <!-- /.content -->
 </div>
