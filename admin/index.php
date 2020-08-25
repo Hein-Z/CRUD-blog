@@ -6,36 +6,6 @@ header('location:login.php');
 }
 include('header.php');
 ?>
-<!-- Navbar -->
-<nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="index3.html" class="nav-link">Home</a>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="#" class="nav-link">Contact</a>
-        </li>
-    </ul>
-
-    <!-- SEARCH FORM -->
-    <form class="form-inline ml-3">
-        <div class="input-group input-group-sm">
-            <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-            <div class="input-group-append">
-                <button class="btn btn-navbar" type="submit">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </div>
-    </form>
-
-
-</nav>
-<!-- /.navbar -->
 
 
 <!-- Content Wrapper. Contains page content -->
@@ -60,13 +30,47 @@ include('header.php');
 
     </div>
     <?php
-            $stmt=$pdo->prepare("SELECT * FROM post");
+    
+if(!empty($_GET)){
+        $page_no=$_GET['page_no'];
+    }
+    else{
+        $page_no=1;
+    }
+    $num_of_regs=2;
+    $offset=($page_no - 1)*$num_of_regs;
+
+    if(!empty($_POST['search']))
+    $search_key=$_POST['search'];
+    
+    if(empty($search_key)){
+  
+            $stmt=$pdo->prepare("SELECT * FROM post  ORDER BY id DESC");
+           
+            $stmt->execute();
+            $raw_result=$stmt->fetchAll();
+            $total_page=ceil(count($raw_result)/$num_of_regs);
+
+            $stmt=$pdo->prepare("SELECT * FROM post  ORDER BY id DESC LIMIT $offset, $num_of_regs");
+           
+            $stmt->execute();
+            $posts=$stmt->fetchAll();}
+            else{
+               
+                $stmt=$pdo->prepare("SELECT * FROM post WHERE title LIKE '%$search_key%'  ORDER BY id DESC");
+           
+            $stmt->execute();
+            $raw_result=$stmt->fetchAll();
+            $total_page=ceil(count($raw_result)/$num_of_regs);
+
+            $stmt=$pdo->prepare("SELECT * FROM post WHERE title LIKE '%$search_key%' ORDER BY id DESC LIMIT $offset, $num_of_regs");
            
             $stmt->execute();
             $posts=$stmt->fetchAll();
-            
+            }
             ?>
     <!-- Main content -->
+    <?php if(count($posts)){ ?>
     <div class="card-body">
         <table class="table table-bordered">
             <thead>
@@ -78,24 +82,62 @@ include('header.php');
                 </tr>
             </thead>
             <tbody>
-                <?php $id=0; foreach($posts as $post){ $id++;?>
+                <?php $id=0;
+                
+                foreach($posts as $post){ $id++;?>
                 <tr>
                     <td><?php echo $id;?></td>
                     <td><?php echo $post['title'];  ?></td>
                     <td>
                         <?php echo substr($post['content'],0,125).'...'; ?>
                     </td>
-                    <td><a href='edit.php?=<?php echo $post['id']; ?>'
+                    <td><a href='edit.php?id=<?php echo $post['id']; ?>'
                             class="btn btn-primary btn-sm mb-1 w-100">Edit</a>
-                        <a href='delete.php?=<?php echo $post['id']; ?>'
+                        <a href='delete.php?id=<?php echo $post['id']; ?>'
+                            onclick="return confirm('Are you sure you want to delete this item?');"
                             class="btn btn-outline-warning btn-sm w-100">Delete</a>
                     </td>
                 </tr>
-                <?php } ?>
+                <?php }?>
+
             </tbody>
         </table>
-    </div>
+        <div class='float-right mt-2 mr-5'>
+            <ul class="pagination">
+                <li class="page-item <?php if($page_no==1){echo 'disabled';} ?>">
+                    <a class="page-link" href="?page_no=<?php  if($page_no<=1){echo $page_no;}
+                        else {echo $page_no-1;}?>" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <li class="page-item <?php if($page_no==1){echo 'disabled';} ?>"><a class="page-link"
+                        href="?page_no=1">First page</a></li>
+                <li class="page-item <?php if($page_no==1){echo 'disabled';} ?>"><a class="page-link" href="?page_no=<?php  if($page_no<=1){echo $page_no;}
+                        else {echo $page_no-1;}?>">Previous Page</a></li>
+                <li class="page-item">
+                    <a class="page-link text-bold" href="#"><?php echo $page_no?>
+                    </a>
+                </li>
+                <li class="page-item <?php if($page_no==$total_page){echo 'disabled';} ?>"><a class="page-link" href="?page_no=<?php if($page_no<$total_page){echo $page_no+1;}
+                        else {echo $page_no;}?>">Next Page</a>
+                </li>
+                <li class="page-item <?php if($page_no==$total_page){echo 'disabled';} ?>"><a class="page-link"
+                        href="?page_no=<?php echo $total_page?>">Last Page</a></li>
+                <li class="page-item  <?php if($page_no==$total_page){echo 'disabled';} ?>">
+                    <a class="page-link" href="?page_no=<?php echo $total_page?>" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <?php } else{?>
+        <h1>There is no post match with '<?php echo $_POST['search']; ?>'</h1>
+        <?php }?>
 
+
+    </div>
 
     <!-- /.content -->
 </div>
