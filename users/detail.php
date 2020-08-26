@@ -160,6 +160,21 @@ if($result){
 <script src="../dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="../dist/js/demo.js"></script>
+<script>
+function openNav() {
+    document.querySelector('.nav-card').style.display = 'block';
+    document.getElementById("mySidenav").style.width = "250px";
+    console.log('hello');
+}
+
+/* Set the width of the side navigation to 0 */
+function closeNav() {
+    document.querySelector('.nav-card').style.display = 'none';
+    document.getElementById("mySidenav").style.width = "0";
+    console.log('hello');
+
+}
+</script>
 </body>
 
 </html>
