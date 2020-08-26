@@ -62,7 +62,8 @@ if($result){
                     <div class="card-header">
                         <div class="user-block">
                             <img class="img-circle" src="../users_profile/admin.jpg" alt="User Image">
-                            <span class="username"><a href="#"><?php echo $_SESSION['user_name'];?>.</a></span>
+                            <span class="username"><a
+                                    href="#"><?php foreach($users as $user){if ($user['id']==$post['author_id'])echo $user['name'];} ?></a></span>
                             <span class="description">Upload at- <?php echo $post['created_at']; ?></span>
                         </div>
                         <a href="index.php" class='btn btn-warning float-right'>back</a>
@@ -75,7 +76,7 @@ if($result){
 
                         <button type="button" class="btn btn-default btn-sm"><i class="far fa-thumbs-up"></i>
                             Like</button>
-                        <span class="float-right text-muted">127 likes - 3 comments</span>
+                        <span class="float-right text-muted"><?php echo count($cmt).' comments';?></span>
                     </div>
                     <!-- /.card-body -->
                     <div class="card-footer card-comments">
@@ -106,8 +107,11 @@ if($result){
                     </div>
                     <!-- /.card-footer -->
                     <div class="card-footer">
+
                         <form action="" method="post">
-                            <img class="img-fluid img-circle img-sm" src="../dist/img/user4-128x128.jpg" alt="Alt Text">
+                            <img class="img-fluid img-circle img-sm"
+                                src="../users_profile/<?php foreach($users as $user){if ($user['id']==$_SESSION['user_id'])echo $user['profile_pic'];} ?>"
+                                alt="Alt Text">
                             <!-- .img-push is used to add margin to elements next to floating images -->
                             <div class="img-push">
                                 <input type="text" name='comment' class="form-control form-control-sm"
