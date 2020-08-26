@@ -7,16 +7,16 @@ if(empty($_SESSION['user_id']) && empty( $_SESSION['logged_in'])){
 }
 
     if($_POST){
-        $file='image/'.rand(time(),time()).$_FILES['image']['name'];
+        $file='../post_image/'.rand(time(),time()).$_FILES['image']['name'];
         $imagetype=pathinfo($file,PATHINFO_EXTENSION);
         if($imagetype != 'png' && $imagetype != 'jpeg' && $imagetype != 'jpg' ){
         echo '<script>alert("image must be jpg, png or jpeg");</script>';
     }else{
         $title=$_POST['title'];
         $content=$_POST['content'];
-        $image=$_FILES['image']["name"];
+        $image=rand(time(),time()).$_FILES['image']['name'];
         move_uploaded_file($_FILES['image']['tmp_name'],$file);
-    $stmt=$pdo->prepare('INSERT INTO post(title,content,image,author_id) VALUE (:title,:content,:image,:author_id)');
+    $stmt=$pdo->prepare('INSERT INTO posts(title,content,image,author_id) VALUE (:title,:content,:image,:author_id)');
     $result=$stmt->execute(array(':title'=>$title,':content'=>$content,':image'=>$image,':author_id'=>  $_SESSION['user_id']));
     }if($result!=null){
         echo '<script>alert("successfully update");</script>';

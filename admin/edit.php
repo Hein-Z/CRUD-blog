@@ -3,7 +3,7 @@ session_start();
 require '../config/config.php';
 include('header.php');
 
-$stmt=$pdo->prepare("SELECT * FROM post WHERE id=:id");
+$stmt=$pdo->prepare("SELECT * FROM posts WHERE id=:id");
 $stmt->bindValue(':id',$_GET['id']);
 $stmt->execute();
 $edit_post=$stmt->fetch(PDO::FETCH_ASSOC);
@@ -15,7 +15,7 @@ if($_POST){
     $ran_name=rand(time(),time());
    
     if(is_uploaded_file($_FILES['image']['tmp_name'])){
-        $file='image/'.$ran_name.$_FILES['image']['name'];
+        $file='../post_image/'.$ran_name.$_FILES['image']['name'];
         $imagetype=pathinfo($file,PATHINFO_EXTENSION);
         if($imagetype != 'png' && $imagetype != 'jpeg' && $imagetype != 'jpg' ){
         echo '<script>alert("image must be jpg, png or jpeg");</script>';
@@ -24,11 +24,11 @@ if($_POST){
         
         $image=$ran_name.$_FILES['image']['name'];
         move_uploaded_file($_FILES['image']['tmp_name'],$file);
-        $stmt=$pdo->prepare('UPDATE post SET title=:title, content=:content, image=:image WHERE id=:id');
+        $stmt=$pdo->prepare('UPDATE posts SET title=:title, content=:content, image=:image WHERE id=:id');
         $result=$stmt->execute(array(':title'=>$title,':content'=>$content,':image'=>$image,':id'=> $_GET['id'] ));}
     }else{
         
-        $stmt=$pdo->prepare('UPDATE post SET title=:title, content=:content WHERE id=:id');
+        $stmt=$pdo->prepare('UPDATE posts SET title=:title, content=:content WHERE id=:id');
             $result=$stmt->execute(array(':title'=>$title,':content'=>$content,':id'=> $_GET['id'] ));
     }
     if($result){
@@ -61,7 +61,7 @@ if($_POST){
                 <input type="file" name='image' class="form-control-file">
             </div>
             <div class="col-5">
-                <img class='img-fluid mb-2  img-thumbnail' src="image/<?php echo $edit_post['image']; ?>"
+                <img class='img-fluid mb-2  img-thumbnail' src="../post_image/<?php echo $edit_post['image']; ?>"
                     alt="image/<?php echo $edit_post['image']; ?>">
             </div>
             <div class="form-group">

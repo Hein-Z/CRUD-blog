@@ -51,26 +51,26 @@ if(!empty($_GET['page_no'])){
     
     if (empty($_POST['search']) && !isset($_COOKIE['search'])){
   
-            $stmt=$pdo->prepare("SELECT * FROM post  ORDER BY id DESC");
+            $stmt=$pdo->prepare("SELECT * FROM posts  ORDER BY id DESC");
            
             $stmt->execute();
             $raw_result=$stmt->fetchAll();
             $total_page=ceil(count($raw_result)/$num_of_regs);
 
-            $stmt=$pdo->prepare("SELECT * FROM post  ORDER BY id DESC LIMIT $offset, $num_of_regs");
+            $stmt=$pdo->prepare("SELECT * FROM posts  ORDER BY id DESC LIMIT $offset, $num_of_regs");
            
             $stmt->execute();
             $posts=$stmt->fetchAll();}
             else{
-                $search_key = $_COOKIE['search'];
+                $search_key =isset($_POST['search']) ? $_POST['search'] : $_COOKIE['search'];
                
-                $stmt=$pdo->prepare("SELECT * FROM post WHERE title LIKE '%$search_key%'  ORDER BY id DESC");
+                $stmt=$pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$search_key%'  ORDER BY id DESC");
            
             $stmt->execute();
             $raw_result=$stmt->fetchAll();
             $total_page=ceil(count($raw_result)/$num_of_regs);
 
-            $stmt=$pdo->prepare("SELECT * FROM post WHERE title LIKE '%$search_key%' ORDER BY id DESC LIMIT $offset, $num_of_regs");
+            $stmt=$pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$search_key%' ORDER BY id DESC LIMIT $offset, $num_of_regs");
            
             $stmt->execute();
             $posts=$stmt->fetchAll();

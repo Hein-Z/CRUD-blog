@@ -1,7 +1,7 @@
 <?php
 require '../config/config.php';
 $ID=$_GET['id'];
-$sql = 'DELETE FROM post WHERE id = :id';
+$sql = 'DELETE FROM posts WHERE id = :id';
 
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':id', $ID);
