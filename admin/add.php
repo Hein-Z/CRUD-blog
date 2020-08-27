@@ -44,7 +44,7 @@ if(empty($_SESSION['user_id']) && empty( $_SESSION['logged_in'])){
             </div>
             <div class="form-group">
                 <label>Image</label>
-                <input type="file" name='image' class="form-control-file">
+                <input type="file" name='image' class="form-control-file" require>
             </div>
             <div class="form-group">
 

@@ -1,51 +1,25 @@
-<?php
-session_start(); 
-require '../config/config.php';
+<div id="mySidenav" class="sidenav col-md-3 col-5">
 
-
-if(empty($_SESSION['user_id']) && empty( $_SESSION['logged_in'])){
-header('location:login.php');}
-include('header.php');
- ?>
-
-
-
-<!-- <div class="card float-left">
-    <h2 style="text-align:center">User Profile Card</h2>
-    <img src="/w3images/team2.jpg" alt="John" style="width:100%">
-    <h1>John Doe</h1>
-    <p class="title">CEO & Founder, Example</p>
-    <p>Harvard University</p>
-    <div style="margin: 24px 0;">
-        <a href="#"><i class="fa fa-dribbble"></i></a>
-        <a href="#"><i class="fa fa-twitter"></i></a>
-        <a href="#"><i class="fa fa-linkedin"></i></a>
-        <a href="#"><i class="fa fa-facebook"></i></a>
-    </div>
-    <p><button>Contact</button></p>
-</div> -->
-<div id="mySidenav" class="sidenav">
-    <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="../users_profile/<?php echo $_GET['profile_pic'];?>" alt="Card image cap">
+    <div class="card nav-card border border-top-0 pb-5  border-left-0 border-primary">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <img class="card-img-top" src="../users_profile/<?php echo $user['profile_pic'];?>" alt="Card image cap">
         <div class="card-body">
             <h5 class="card-title text-primary text-bold"><?php echo $_SESSION['user_name'];?>'s profile</h5>
 
         </div>
-        <ul class="list-group list-group-flush">
+        <ul class="list-group list-group-flush" style="font-size:20px;">
             <li class="list-group-item">
-                Account name: <span><?php echo $_SESSION['user_name'];?></span>
+                Account name: <span><?php echo $user['name'];?></span>
             </li>
-            <li class="list-group-item"> Email: <span><?php echo $_GET['email'];?></span>
+            <li class="list-group-item"> Email: <span><?php echo $user['email'];?></span>
             </li>
-            <li class="list-group-item">Role: <span><?php if($_GET['role']==1) echo 'Admin';else echo 'user';?></span>
+            <li class="list-group-item">Role:
+                <span><?php if($user['role']==1) echo 'Admin';else echo 'user';?></span>
             </li>
         </ul>
-        <div class="card-body">
-            <a href="#" class="card-link">Account Setting</a>
-
+        <div class="card-body" style="font-size:20px;">
+            <a href="account_setting.php" class="card-link profile_btn btn btn-outline-primary">Account Setting</a>
+            <a href="index.php" class="card-link back_btn btn btn-warning ml-0">Back</a>
         </div>
     </div>
 </div>
-</body>
-
-</html>

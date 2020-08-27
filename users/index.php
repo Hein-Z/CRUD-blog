@@ -36,6 +36,24 @@ $offset=($page_no - 1)*$num_of_regs;
        
         $stmt->execute();
         $posts=$stmt->fetchAll();
+
+        
+
+        $post_author_name=[];
+        $num_cmt=[];
+        foreach($posts as $key=> $post){
+            $stmt=$pdo->prepare("SELECT COUNT(id) FROM comments WHERE post_id=:id");
+            $stmt->bindValue(':id',$post['id']);
+            $stmt->execute();
+            $num_cmt[]=$stmt->fetchAll();
+
+            $post_author_id=$post['author_id'];
+            $stmt=$pdo->prepare("SELECT name FROM users WHERE id=$post_author_id");
+           
+            $stmt->execute();
+            $post_author_name[]=$stmt->fetch(PDO::FETCH_ASSOC);
+        }
+      
 ?>
 
 <!-- Main content -->
@@ -45,38 +63,41 @@ $offset=($page_no - 1)*$num_of_regs;
         <div class="row" style='overflow-x: hidden !important;'>
 
             <?php 
-                foreach($posts as $post){ ?>
-            <div class="col-md-4 py-2">
+                foreach($posts as $key=>$post){ ?>
+            <div class="col-md-4 py-2 ">
                 <!-- Box Comment -->
-                <div class="card card-widget border-dark mb-0" style='min-height:450px'>
+                <div class="card card-widget border-dark  border border-secondary mb-0 " style='min-height:520px'>
                     <div class="card-header">
                         <div class="user-block">
                             <img class="img-circle" src="../users_profile/admin.jpg" alt="User Image">
-                            <span class="username"><a href="#">Admin</a></span>
-                            <span class="description"> 7:30 PM Today</span>
+                            <span class="username"><a href="#"><?php echo $post_author_name[$key]['name'];?></a></span>
+                            <span class="description"> <?php echo $post['created_at'];?></span>
                         </div>
 
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body pb-0">
-                        <div style='height:270px;'>
-                            <img class="img-fluid pad" style='max-height:270px'
-                                src="../post_image/<?php echo $post['image'];?>" alt="Photo">
+                        <a href="detail.php?id=<?php echo  $post['id']; ?>">
+                            <div style='height:270px;'>
+                                <img class="img-fluid pad" style='max-height:270px'
+                                    src="../post_image/<?php echo $post['image'];?>" alt="Photo">
 
-                        </div>
-                        <hr>
-                        <p><?php echo $post['title'];?></p>
+                            </div>
+                            <hr>
+                            <p><?php echo $post['title'];?></p>
+                        </a>
                     </div>
 
-                    <a href="detail.php?id=<?php echo  $post['id']; ?>" class="stretched-link"></a>
+                    <div class='card-footer shadow mb-2 mr-1 '>
+                        <div>
+                            <!-- <a href="#" type="button" class="btn btn-primary btn-sm ml-3 mb-2"><i
+                                    class="far fa-thumbs-up text-bold"></i>
+                                Like</a> -->
+                            <span class="float-right text-muted mr-3">
+                                <?php echo $num_cmt[$key][0]['COUNT(id)'] ?> comments</span></div>
+                    </div>
                 </div>
                 <!-- /.card -->
-                <div class='card'>
-                    <div> <a href="#" type="button" class="btn btn-primary btn-sm ml-3 mb-2"><i
-                                class="far fa-thumbs-up text-bold"></i>
-                            Like</a>
-                        <span class="float-right text-muted mr-3">127 likes - 3 comments</span></div>
-                </div>
             </div>
 
             <?php }?>
@@ -119,9 +140,9 @@ $offset=($page_no - 1)*$num_of_regs;
 </section>
 <!-- /.content -->
 
-<a id="back-to-top" href="#" class="btn btn-primary back-to-top mr-5" role="button" aria-label="Scroll to top">
+<!-- <a id="back-to-top" href="#" class="btn btn-primary back-to-top mr-5" role="button" aria-label="Scroll to top">
     <i class="fas fa-chevron-up"></i>
-</a>
+</a> -->
 </div>
 <!-- /.content-wrapper -->
 
@@ -144,17 +165,20 @@ $offset=($page_no - 1)*$num_of_regs;
 <!-- AdminLTE for demo purposes -->
 <script src="../dist/js/demo.js"></script>
 <script>
+document.querySelector('.nav-card').style.display = 'none';
+document.getElementById("mySidenav").style.width = "0";
+
 function openNav() {
     document.querySelector('.nav-card').style.display = 'block';
     document.getElementById("mySidenav").style.width = "250px";
-    console.log('hello');
+
 }
 
 /* Set the width of the side navigation to 0 */
 function closeNav() {
     document.querySelector('.nav-card').style.display = 'none';
     document.getElementById("mySidenav").style.width = "0";
-    console.log('hello');
+
 
 }
 </script>
