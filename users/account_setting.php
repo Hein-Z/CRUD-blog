@@ -7,9 +7,27 @@ $stmt->execute(array(':id'=> $_SESSION['user_id']));
 $user=$stmt->fetch();
 
 
-
+if($_POST){
+    // set profile pic
+    $new_profile=$_SESSION['profile_pic'];
     
-if($_POST['email']!=NULL ||$_POST['name']!=NULL ||$_POST['new_password']!=NULL ||$_POST['confirm_password']!=NULL || isset($_GET['image'])  ){
+    
+    if($_FILES['image']['name']!=NULL){
+    $ran_name=rand(time(),time());
+    $file='../users_profile/'.$ran_name.$_FILES['image']['name'];
+    $imagetype=pathinfo($file,PATHINFO_EXTENSION);
+    if($imagetype != 'png' && $imagetype != 'jpeg' && $imagetype != 'jpg' ){
+        $new_profile=$_SESSION['profile_pic'];
+    echo "<script>alert('image must be jpg, png or jpeg');</script>";
+    }
+    else{
+        
+
+    $new_profile=$ran_name.$_FILES['image']['name'];
+    move_uploaded_file($_FILES['image']['tmp_name'],$file);
+    // stmt=pdo->prepare('UPDATE posts SET title=:title, content=:content, image=:image WHERE id=:id');
+    // result=stmt->execute(array(':title'=>title,':content'=>content,':image'=>image,':id'=> _GET['id'] ));}
+    }}
     // set new name
     if($_POST['name']!=NULL){
         $new_name=$_POST['name'];
@@ -24,7 +42,7 @@ if($_POST['email']!=NULL ||$_POST['name']!=NULL ||$_POST['new_password']!=NULL |
         $new_email=$user['email'];                                          //do not set email
             echo '<script>alert("Enter your password to change Email!");</script>'; 
         }else{                                                       //check if password set::password  set
-                if($_POST['email']!=$user['email']){                 //check if previous email::NOT previous email
+        if($_POST['email']!=$user['email']){                 //check if previous email::NOT previous email
                     $stmt=$pdo->prepare("SELECT email FROM users WHERE email=:email");
                     $stmt->bindValue(':email',$_POST['email']);
                     $stmt->execute();
@@ -40,11 +58,7 @@ if($_POST['email']!=NULL ||$_POST['name']!=NULL ||$_POST['new_password']!=NULL |
             }else{                                                      //check if previous email::previous email
                 $new_email=$user['email'];                          //set previous email
             }
-                                                                                  
-                                                
-        
-        
-    
+                                                                                   
     }
     }else{                                                              //check if email set::email NOT set
         $new_email=$user['email'];                                      //do not set email
@@ -58,9 +72,7 @@ if($_POST['email']!=NULL ||$_POST['name']!=NULL ||$_POST['new_password']!=NULL |
         if($_POST['new_password']!=NULL && $_POST['confirm_password']!=NULL){
             if($_POST['new_password']== $_POST['confirm_password']){   
                     $new_password=$_POST['new_password'];
-                            //pass all condition ::set new password
-           
-            
+                            //pass all condition ::set new password           
         }else{
         echo '<script>alert("Do not match password!");</script>'; 
             $new_password=$user['password'];
@@ -68,8 +80,6 @@ if($_POST['email']!=NULL ||$_POST['name']!=NULL ||$_POST['new_password']!=NULL |
        }else{
         $new_password=$user['password'];
        }
-       
-
     }else {
         if($_POST['new_password']!=null && $_POST['confirm_password']!=null){
         echo '<script>alert("Type your old password to change new password!");</script>'; 
@@ -80,10 +90,11 @@ if($_POST['email']!=NULL ||$_POST['name']!=NULL ||$_POST['new_password']!=NULL |
     
     if($_POST['password']==$user['password']){               //check if password correct::password correct
 
-    $stmt=$pdo->prepare('UPDATE users SET name=:name, email=:email, password=:password WHERE id=:id');
-    $result=$stmt->execute(array(':name'=>$new_name,':email'=>$new_email,'password'=>$new_password,':id'=> $_SESSION['user_id'] ));
+    $stmt=$pdo->prepare('UPDATE users SET name=:name, email=:email, password=:password,profile_pic=:image WHERE id=:id');
+    $result=$stmt->execute(array(':name'=>$new_name,':email'=>$new_email,'password'=>$new_password,':image'=>$new_profile,':id'=> $_SESSION['user_id'] ));
     if(isset($result)){
         $_SESSION['user_name']=$new_name;
+        $_SESSION['profile_pic']=$new_profile;
         echo '<script>alert("Completely Updated!");</script>'; 
 
     }
@@ -91,6 +102,7 @@ if($_POST['email']!=NULL ||$_POST['name']!=NULL ||$_POST['new_password']!=NULL |
         $new_password=$user['password'];
         echo '<script>alert("Wrong Password!");</script>'; 
            }
+
 }
     
  
@@ -204,7 +216,8 @@ if($_POST['email']!=NULL ||$_POST['name']!=NULL ||$_POST['new_password']!=NULL |
 
 <body style='overflow-x:hidden'>
     <div class="row">
-        <?php include('profile.php'); ?>
+        <?php 
+        include('profile.php'); ?>
         <div class="col-9 offset-3 col-lg-10 offset-lg-2 pt-5 pb-2">
 
             <h1 class='text-center'>Account Setting</h1>
@@ -262,8 +275,8 @@ if($_POST['email']!=NULL ||$_POST['name']!=NULL ||$_POST['new_password']!=NULL |
                             <span class="file-custom"></span>
 
                         </div>
-                        <div class="form-group ">
-                            <label>Password
+                        <div class="form-group mt-5">
+                            <label class='text-primary text-bold'>Password
                                 <span class='text-success'> (Required)</span>
                             </label>
 
@@ -273,7 +286,7 @@ if($_POST['email']!=NULL ||$_POST['name']!=NULL ||$_POST['new_password']!=NULL |
 
                         </div>
 
-                        <div class="form-group mt-5">
+                        <div class="form-group ">
 
                             <input type="submit" class='btn btn-primary' name='submit' value='update'>
                             <a href="index.php" class='btn btn-warning'>Back</a>

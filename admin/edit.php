@@ -2,7 +2,11 @@
 session_start();
 require '../config/config.php';
 include('header.php');
-
+if(empty($_SESSION['user_id']) && empty( $_SESSION['logged_in'])){
+    header('location:login.php');
+}if($_SESSION['role']==0){
+    header('location:login.php');
+    }
 $stmt=$pdo->prepare("SELECT * FROM posts WHERE id=:id");
 $stmt->bindValue(':id',$_GET['id']);
 $stmt->execute();
@@ -12,9 +16,9 @@ if($_POST){
     $title=$_POST['title'];
     $content=$_POST['content'];
         
-    $ran_name=rand(time(),time());
    
     if(is_uploaded_file($_FILES['image']['tmp_name'])){
+    $ran_name=rand(time(),time());
         $file='../post_image/'.$ran_name.$_FILES['image']['name'];
         $imagetype=pathinfo($file,PATHINFO_EXTENSION);
         if($imagetype != 'png' && $imagetype != 'jpeg' && $imagetype != 'jpg' ){
@@ -31,7 +35,7 @@ if($_POST){
         $stmt=$pdo->prepare('UPDATE posts SET title=:title, content=:content WHERE id=:id');
             $result=$stmt->execute(array(':title'=>$title,':content'=>$content,':id'=> $_GET['id'] ));
     }
-    if($result){
+    if(isset($result)){
         echo '<script>alert("successfully edited");window.location.href="index.php";</script>';
         
         }else{
@@ -67,7 +71,11 @@ if($_POST){
             <div class="form-group">
 
                 <input type="submit" class='btn btn-primary' name='' value='submit'>
-                <a href="index.php" class='btn btn-warning'>Back</a>
+                <a href="index.php" class='btn btn-warning'><svg width="2em" height="1.5em" viewBox="0 0 16 16"
+                        class="bi bi-arrow-left-square-fill " fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.354 10.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L6.207 7.5H11a.5.5 0 0 1 0 1H6.207l2.147 2.146z" />
+                    </svg> Back</a>
             </div>
         </form>
     </div>

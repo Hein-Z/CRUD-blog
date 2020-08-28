@@ -1,10 +1,3 @@
-<?php
-$stmt=$pdo->prepare("SELECT * FROM users WHERE id=:id");
-
-$stmt->execute(array(':id'=> $_SESSION['user_id']));
-$user=$stmt->fetch();
-?>
-
 <!DOCTYPE html>
 <!--
 This is a starter template page. Use this page to start your new project from
@@ -71,6 +64,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 </head>
 
 <body class="hold-transition sidebar-mini" style='overflow-x: hidden;'>
+
     <?php include('profile.php');?>
     <div class="wrapper">
 
@@ -89,20 +83,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <a onclick="openNav()" class="nav-link text-primary text-bold p-1" style='cursor:pointer;'>
                         <?php echo  $_SESSION['user_name'];?></a>
                 </li>
+                <li class="nav-item d-sm-inline-block">
+                    <a class="nav-link text-primary  p-1 px-3" href='index.php' style='cursor:pointer;'>
+                        Home</a>
+                </li>
+
+                <li class="nav-item d-inline-block">
+                    <button type="button" class="btn btn-default">Categories</button>
+                    <button type="button" class="btn btn-default dropdown-toggle dropdown-toggle-split"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="sr-only">War News</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="index.php?category=IT news">IT News</a>
+                        <a class="dropdown-item" href="index.php?category=Art news">Art News</a>
+                        <a class="dropdown-item" href="index.php?category=Entertainments">Entertainments</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="index.php?category=Non categorized">non categorized</a>
+                    </div>
+                </li>
 
             </ul>
 
-            <!-- SEARCH FORM -->
-            <form class="form-inline ml-3" action='index.php' method='post'>
-                <div class="input-group input-group-sm">
-                    <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-navbar" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-            </form>
+
             <ul class='ml-auto navbar-nav mr-lg-5 '>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href='logout.php' class='btn btn-danger float-right'>Logout</a>

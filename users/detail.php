@@ -53,8 +53,6 @@ foreach($cmt as $key=>$comment){
    
 
 
-
-
 ?>
 <?php
 
@@ -75,6 +73,7 @@ foreach($cmt as $key=>$comment){
                                 alt="User Image">
                             <span class="username"><a href="#"><?php echo $post_author['name']; ?></a></span>
                             <span class="description">Upload at- <?php echo $post['created_at']; ?></span>
+                            <span class="ml-auto text-success"> <?php echo $post['category']; ?></span>
                         </div>
                         <a href="index.php" class='btn btn-warning float-right'>back</a>
                     </div>

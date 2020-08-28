@@ -6,16 +6,12 @@ require '../config/config.php';
 if(empty($_SESSION['user_id']) && empty( $_SESSION['logged_in'])){
 header('location:login.php');
 }
-if(isset($_POST['search'])) {
-    setcookie('search',$_POST['search'], time() + (86400 * 30), "/");
-    }
 
-  
-?>
+if(isset($_GET['category']))
+$category=$_GET['category'];
 
-<?php include('header.php'); ?>
 
-<?php   
+    
 if(!empty($_GET['page_no'])){
     $page_no=$_GET['page_no'];
 }
@@ -25,7 +21,53 @@ else{
 $num_of_regs=3;
 $offset=($page_no - 1)*$num_of_regs;
 
-     
+
+if(isset($category)) {
+    setcookie('category',$_GET['category'], time() + (86400 * 30), "/");
+    
+        }
+    
+    
+    else{
+        if(empty($_GET['page_no'])){
+            unset($_COOKIE['category']);
+            setcookie('category',null,-1,'/');
+        }
+    }
+
+    if(isset($category)||isset($_COOKIE['category'])){
+        $category=isset($category) ? $category:$_COOKIE['category'];
+        $stmt=$pdo->prepare("SELECT * FROM posts WHERE category='$category' ORDER BY id DESC ");
+           
+        $stmt->execute();
+        $raw_result=$stmt->fetchAll();
+        $total_page=ceil(count($raw_result)/$num_of_regs);
+
+        $stmt=$pdo->prepare("SELECT * FROM posts WHERE category='$category' ORDER BY id DESC LIMIT $offset, $num_of_regs");
+      
+        $stmt->execute();
+        $posts=$stmt->fetchAll();
+
+        
+
+        $post_author=[];
+        $num_cmt=[];
+        
+        foreach($posts as $key=> $post){
+            $stmt=$pdo->prepare("SELECT COUNT(id) FROM comments WHERE post_id=:id");
+            $stmt->bindValue(':id',$post['id']);
+            $stmt->execute();
+            $num_cmt[]=$stmt->fetchAll();
+
+            $post_author_id=$post['author_id'];
+            $stmt=$pdo->prepare("SELECT name,profile_pic FROM users WHERE id=$post_author_id");
+           
+            $stmt->execute();
+            $post_author[]=$stmt->fetch(PDO::FETCH_ASSOC);
+        }
+    }
+    
+    if(empty($category)&& empty($_COOKIE['category'])){
         $stmt=$pdo->prepare("SELECT * FROM posts  ORDER BY id DESC");
            
         $stmt->execute();
@@ -39,8 +81,9 @@ $offset=($page_no - 1)*$num_of_regs;
 
         
 
-        $post_author_name=[];
+        $post_author=[];
         $num_cmt=[];
+        
         foreach($posts as $key=> $post){
             $stmt=$pdo->prepare("SELECT COUNT(id) FROM comments WHERE post_id=:id");
             $stmt->bindValue(':id',$post['id']);
@@ -48,14 +91,15 @@ $offset=($page_no - 1)*$num_of_regs;
             $num_cmt[]=$stmt->fetchAll();
 
             $post_author_id=$post['author_id'];
-            $stmt=$pdo->prepare("SELECT name FROM users WHERE id=$post_author_id");
+            $stmt=$pdo->prepare("SELECT name,profile_pic FROM users WHERE id=$post_author_id");
            
             $stmt->execute();
-            $post_author_name[]=$stmt->fetch(PDO::FETCH_ASSOC);
+            $post_author[]=$stmt->fetch(PDO::FETCH_ASSOC);
         }
-      
+    }
 ?>
-
+<?php
+ include('header.php'); ?>
 <!-- Main content -->
 <section class="content-wrapper ml-0">
     <div class="container-fluid my-4">
@@ -69,9 +113,11 @@ $offset=($page_no - 1)*$num_of_regs;
                 <div class="card card-widget border-dark  border border-secondary mb-0 " style='min-height:520px'>
                     <div class="card-header">
                         <div class="user-block">
-                            <img class="img-circle" src="../users_profile/admin.jpg" alt="User Image">
-                            <span class="username"><a href="#"><?php echo $post_author_name[$key]['name'];?></a></span>
+                            <img class="img-circle"
+                                src="../users_profile/<?php echo $post_author[$key]['profile_pic']?>" alt="User Image">
+                            <span class="username"><a href="#"><?php echo $post_author[$key]['name'];?></a></span>
                             <span class="description"> <?php echo $post['created_at'];?></span>
+                            <span class='ml-auto text-success'> <?php echo $post['category'];?></span>
                         </div>
 
                     </div>

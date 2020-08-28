@@ -18,8 +18,8 @@ if($user){
 $name=$_POST['name'];
 $email=$_POST['email'];
 $password=$_POST['password'];
-$stmt=$pdo->prepare('INSERT INTO users(name,email,password) VALUE (:name,:email,:password)');
-$result=$stmt->execute(array(':name'=>$name,':email'=>$email,':password'=>  $password));
+$stmt=$pdo->prepare('INSERT INTO users(name,email,password) VALUE (:name,:email,:password,:role)');
+$result=$stmt->execute(array(':name'=>$name,':email'=>$email,':password'=>  $password,':role'=>0));
 
 if($result){
     echo '<script>alert("Successfully Registered, Please Login!");window.location.href="login.php";</script>';

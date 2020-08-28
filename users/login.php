@@ -15,6 +15,7 @@ if($user){
         $_SESSION['logged_in']=time();
         $_SESSION['user_name']=$user['name'];
         $_SESSION['profile_pic']=$user['profile_pic'];
+        $_SESSION['role']=$user['role'];
         header('location: index.php');
         // print_r($_SESSION);
     }

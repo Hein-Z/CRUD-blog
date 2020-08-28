@@ -1,8 +1,14 @@
+<?php
+$stmt=$pdo->prepare("SELECT * FROM users WHERE id=:id");
+
+$stmt->execute(array(':id'=> $_SESSION['user_id']));
+$user=$stmt->fetch();
+?>
 <div id="mySidenav" class="sidenav col-md-3 col-5">
 
     <div class="card nav-card border border-top-0 pb-5  border-left-0 border-primary">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <img class="card-img-top" src="../users_profile/<?php echo $user['profile_pic'];?>" alt="Card image cap">
+        <img class="card-img-top" src="../users_profile/<?php echo $_SESSION['profile_pic'];?>" alt="Card image cap">
         <div class="card-body">
             <h5 class="card-title text-primary text-bold"><?php echo $_SESSION['user_name'];?>'s profile</h5>
 

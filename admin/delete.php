@@ -6,9 +6,10 @@ $sql = 'DELETE FROM posts WHERE id = :id';
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':id', $ID);
 
-        $stmt->execute();
+        $result=$stmt->execute();
+if(isset($result)){
 
         echo '<script>alert("Successful Delete");
         window.location.href="index.php";
-        </script>';
+        </script>';}
 ?>
